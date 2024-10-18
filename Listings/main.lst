@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              10/17/2024 14:55:38 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              10/18/2024 22:44:44 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   48          bit     B_2ms;          //4ms定时标志
   49          bit     B_start;        //启动模式
   50          bit     B_Timer3_OverFlow; //Timer3超时，也就是换相时间计数超时
-C51 COMPILER V9.60.7.0   MAIN                                                              10/17/2024 14:55:38 PAGE 2   
+C51 COMPILER V9.60.7.0   MAIN                                                              10/18/2024 22:44:44 PAGE 2   
 
   51          
   52          uint8_t step;           //切换步骤,0~5六个状态
@@ -126,7 +126,7 @@ line level    source
  110   2          } else {
  111   2              if(--step >= 6) {
  112   3                  step = 5; 
-C51 COMPILER V9.60.7.0   MAIN                                                              10/17/2024 14:55:38 PAGE 3   
+C51 COMPILER V9.60.7.0   MAIN                                                              10/18/2024 22:44:44 PAGE 3   
 
  113   3              }
  114   2          }   
@@ -190,7 +190,7 @@ line level    source
  172   1          GPIO_P1_SetMode(0x3f, GPIO_Mode_Output_PP);
  173   1              PWMA_PSCR = 3;          // 预分频寄存器, 分频 Fck_cnt = Fck_psc/(PSCR[15:0}+1), 边沿对齐PWM频率 = SYSclk/((PSCR+1
              -)*(AAR+1)), 中央对齐PWM频率 = SYSclk/((PSCR+1)*(AAR+1)*2).
-C51 COMPILER V9.60.7.0   MAIN                                                              10/17/2024 14:55:38 PAGE 4   
+C51 COMPILER V9.60.7.0   MAIN                                                              10/18/2024 22:44:44 PAGE 4   
 
  174   1              PWMA_DTR  = 24;         // 死区时间配置, n=0~127: DTR= n T,   0x80 ~(0x80+n), n=0~63: DTR=(64+n)*2T,  
  175   1                                                      //                              0xc0 ~(0xc0+n), n=0~31: DTR=(32+n)*8T,   0xE0 ~(0xE0+n), n=0~31: DTR=(32+n)*16T,
@@ -254,7 +254,7 @@ line level    source
  228   1              ADCTIM = CSSETUP + CSHOLD + SMPDUTY;
  229   1      }
  230          
-C51 COMPILER V9.60.7.0   MAIN                                                              10/17/2024 14:55:38 PAGE 5   
+C51 COMPILER V9.60.7.0   MAIN                                                              10/18/2024 22:44:44 PAGE 5   
 
  231          void CMP_config(void)   //比较器初始化程序
  232          {
@@ -318,7 +318,7 @@ line level    source
  289   3                      } else {
  290   3                              PhaseTime = (((uint16_t)T3H << 8) + T3L) >> 1;  //单位为1us
  291   3                              if(PhaseTime >= max_phasetime)  PhaseTime = max_phasetime;      //换相时间
-C51 COMPILER V9.60.7.0   MAIN                                                              10/17/2024 14:55:38 PAGE 6   
+C51 COMPILER V9.60.7.0   MAIN                                                              10/18/2024 22:44:44 PAGE 6   
 
  292   3                      }
  293   2              
@@ -382,7 +382,7 @@ line level    source
  351   1      }
  352          
  353          //用于延迟30度时间然后换相，2MHZ运行，也用于等待消磁时间
-C51 COMPILER V9.60.7.0   MAIN                                                              10/17/2024 14:55:38 PAGE 7   
+C51 COMPILER V9.60.7.0   MAIN                                                              10/18/2024 22:44:44 PAGE 7   
 
  354          //============================ timer4初始化函数 ============================================
  355          void Timer4_Config(void)
@@ -446,7 +446,7 @@ line level    source
  412          void StartMotor(void)
  413          {   
  414   1              uint16_t timer,i, min;
-C51 COMPILER V9.60.7.0   MAIN                                                              10/17/2024 14:55:38 PAGE 8   
+C51 COMPILER V9.60.7.0   MAIN                                                              10/18/2024 22:44:44 PAGE 8   
 
  415   1          
  416   1              CMPCR1 = 0x8C;  // 关比较器中断
@@ -510,7 +510,7 @@ line level    source
  474   1      }
  475          
  476          /**********************************************/
-C51 COMPILER V9.60.7.0   MAIN                                                              10/17/2024 14:55:38 PAGE 9   
+C51 COMPILER V9.60.7.0   MAIN                                                              10/18/2024 22:44:44 PAGE 9   
 
  477          void main(void)
  478          {
@@ -574,7 +574,7 @@ line level    source
  536   3                              if(B_RUN)       //正在运行中
  537   3                              {
  538   4                                      if(abs(PWM_Value) < (D_START_PWM))      // 停转
-C51 COMPILER V9.60.7.0   MAIN                                                              10/17/2024 14:55:38 PAGE 10  
+C51 COMPILER V9.60.7.0   MAIN                                                              10/18/2024 22:44:44 PAGE 10  
 
  539   4                      {
  540   5                                              stop();
