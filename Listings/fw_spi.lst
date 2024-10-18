@@ -1,0 +1,59 @@
+C51 COMPILER V9.60.7.0   FW_SPI                                                            10/01/2024 12:56:56 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FW_SPI
+OBJECT MODULE PLACED IN .\Objects\fw_spi.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE FwLib_STC8\src\fw_spi.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(.\FwLib_ST
+                    -C8\include) DEFINE(__CX51__,__CONF_MCU_MODEL=MCU_MODEL_STC8H1K28,__CONF_FOSC=24000000UL) DEBUG OBJECTEXTEND PRINT(.\List
+                    -ings\fw_spi.lst) OBJECT(.\Objects\fw_spi.obj)
+
+line level    source
+
+   1          // Copyright 2021 IOsetting <iosetting(at)outlook.com>
+   2          //
+   3          // Licensed under the Apache License, Version 2.0 (the "License");
+   4          // you may not use this file except in compliance with the License.
+   5          // You may obtain a copy of the License at
+   6          //
+   7          //     http://www.apache.org/licenses/LICENSE-2.0
+   8          //
+   9          // Unless required by applicable law or agreed to in writing, software
+  10          // distributed under the License is distributed on an "AS IS" BASIS,
+  11          // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  12          // See the License for the specific language governing permissions and
+  13          // limitations under the License.
+  14          
+  15          #include "fw_spi.h"
+  16          #include "fw_tim.h"
+  17          #include "fw_sys.h"
+  18          
+  19          
+  20          uint8_t SPI_TxRx(uint8_t dat)
+  21          {
+  22   1              SPDAT = dat;
+  23   1          while (!SPI_RxTxFinished());
+  24   1          SPI_ClearInterrupts();
+  25   1              return SPDAT;
+  26   1      }
+  27          
+  28          void SPI_TxRxBytes(uint8_t *pBuf, uint8_t len)
+  29          {
+  30   1          while(len--)
+  31   1          {
+  32   2              *pBuf++ = SPI_TxRx(*pBuf);
+  33   2          }
+  34   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     71    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       3
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

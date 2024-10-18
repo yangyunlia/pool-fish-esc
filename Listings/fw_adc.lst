@@ -1,0 +1,63 @@
+C51 COMPILER V9.60.7.0   FW_ADC                                                            10/01/2024 12:56:55 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FW_ADC
+OBJECT MODULE PLACED IN .\Objects\fw_adc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE FwLib_STC8\src\fw_adc.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(.\FwLib_ST
+                    -C8\include) DEFINE(__CX51__,__CONF_MCU_MODEL=MCU_MODEL_STC8H1K28,__CONF_FOSC=24000000UL) DEBUG OBJECTEXTEND PRINT(.\List
+                    -ings\fw_adc.lst) OBJECT(.\Objects\fw_adc.obj)
+
+line level    source
+
+   1          // Copyright 2021 IOsetting <iosetting(at)outlook.com>
+   2          //
+   3          // Licensed under the Apache License, Version 2.0 (the "License");
+   4          // you may not use this file except in compliance with the License.
+   5          // You may obtain a copy of the License at
+   6          //
+   7          //     http://www.apache.org/licenses/LICENSE-2.0
+   8          //
+   9          // Unless required by applicable law or agreed to in writing, software
+  10          // distributed under the License is distributed on an "AS IS" BASIS,
+  11          // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  12          // See the License for the specific language governing permissions and
+  13          // limitations under the License.
+  14          
+  15          #include "fw_adc.h"
+  16          
+  17          
+  18          uint8_t ADC_Convert(void)
+  19          {
+  20   1          ADC_Start();
+  21   1          NOP();
+  22   1          NOP();
+  23   1          while (!ADC_SamplingFinished());
+  24   1          ADC_ClearInterrupt();
+  25   1          return ADC_RES;
+  26   1      }
+  27          
+  28          uint16_t ADC_ConvertHP(void)
+  29          {
+  30   1          int16_t res;
+  31   1          ADC_Start();
+  32   1          NOP();
+  33   1          NOP();
+  34   1          while (!ADC_SamplingFinished());
+  35   1          ADC_ClearInterrupt();
+  36   1          res = ADC_RES;
+  37   1          return (res << 8) + ADC_RESL;
+  38   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     44    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

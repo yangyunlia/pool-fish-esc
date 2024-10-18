@@ -1,0 +1,143 @@
+C51 COMPILER V9.60.7.0   FW_I2C                                                            10/01/2024 12:56:55 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FW_I2C
+OBJECT MODULE PLACED IN .\Objects\fw_i2c.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE FwLib_STC8\src\fw_i2c.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(.\FwLib_ST
+                    -C8\include) DEFINE(__CX51__,__CONF_MCU_MODEL=MCU_MODEL_STC8H1K28,__CONF_FOSC=24000000UL) DEBUG OBJECTEXTEND PRINT(.\List
+                    -ings\fw_i2c.lst) OBJECT(.\Objects\fw_i2c.obj)
+
+line level    source
+
+   1          // Copyright 2021 IOsetting <iosetting(at)outlook.com>
+   2          //
+   3          // Licensed under the Apache License, Version 2.0 (the "License");
+   4          // you may not use this file except in compliance with the License.
+   5          // You may obtain a copy of the License at
+   6          //
+   7          //     http://www.apache.org/licenses/LICENSE-2.0
+   8          //
+   9          // Unless required by applicable law or agreed to in writing, software
+  10          // distributed under the License is distributed on an "AS IS" BASIS,
+  11          // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  12          // See the License for the specific language governing permissions and
+  13          // limitations under the License.
+  14          
+  15          #include "fw_i2c.h"
+  16          
+  17          
+  18          uint8_t I2C_Write(uint8_t devAddr, uint8_t memAddr, uint8_t *dat, uint16_t size)
+  19          {
+  20   1          SFRX_ON();
+  21   1          I2C_MasterStart();
+  22   1          I2C_MasterSendData(devAddr & 0xFE);
+  23   1          I2C_MasterRxAck();
+  24   1          I2C_MasterSendData(memAddr);
+  25   1          I2C_MasterRxAck();
+  26   1          while(size--)
+  27   1          {
+  28   2              I2C_MasterSendData(*dat++);
+  29   2              I2C_MasterRxAck();
+  30   2          }
+  31   1          I2C_MasterStop();
+  32   1          SFRX_OFF();
+  33   1          return HAL_OK;
+  34   1      }
+  35          
+  36          uint8_t I2C_Read(uint8_t devAddr, uint8_t memAddr, uint8_t *buf, uint16_t size)
+  37          {
+  38   1          SFRX_ON();
+  39   1          I2C_MasterStart();
+  40   1          I2C_MasterSendData(devAddr & 0xFE);
+  41   1          I2C_MasterRxAck();
+  42   1          I2C_MasterSendData(memAddr);
+  43   1          I2C_MasterRxAck();
+  44   1          I2C_MasterStart();
+  45   1          I2C_MasterSendData(devAddr | 0x01);
+  46   1          I2C_MasterRxAck();
+  47   1          while(size--)
+  48   1          {
+  49   2              I2C_SendMasterCmd(I2C_MasterCmd_Recv);
+  50   2              *buf++ = I2CRXD;
+  51   2              if (size == 0)
+  52   2              {
+  53   3                  I2C_MasterNAck();
+C51 COMPILER V9.60.7.0   FW_I2C                                                            10/01/2024 12:56:55 PAGE 2   
+
+  54   3              }
+  55   2              else
+  56   2              {
+  57   3                  I2C_MasterAck();
+  58   3              }
+  59   2          }
+  60   1          I2C_MasterStop();
+  61   1          SFRX_OFF();
+  62   1          return HAL_OK;
+  63   1      }
+  64          
+  65          uint8_t I2C_Write16BitAddr(uint8_t devAddr, uint16_t memAddr, uint8_t *dat, uint16_t size)
+  66          {
+  67   1          SFRX_ON();
+  68   1          I2C_MasterStart();
+  69   1          I2C_MasterSendData(devAddr & 0xFE);
+  70   1          I2C_MasterRxAck();
+  71   1          I2C_MasterSendData(memAddr >> 8);
+  72   1          I2C_MasterRxAck();
+  73   1          I2C_MasterSendData(memAddr & 0xFF);
+  74   1          I2C_MasterRxAck();
+  75   1          while(size--)
+  76   1          {
+  77   2              I2C_MasterSendData(*dat++);
+  78   2              I2C_MasterRxAck();
+  79   2          }
+  80   1          I2C_MasterStop();
+  81   1          SFRX_OFF();
+  82   1          return HAL_OK;
+  83   1      }
+  84          
+  85          uint8_t I2C_Read16BitAddr(uint8_t devAddr, uint16_t memAddr, uint8_t *buf, uint16_t size)
+  86          {
+  87   1          SFRX_ON();
+  88   1          I2C_MasterStart();
+  89   1          I2C_MasterSendData(devAddr & 0xFE);
+  90   1          I2C_MasterRxAck();
+  91   1          I2C_MasterSendData(memAddr >> 8);
+  92   1          I2C_MasterRxAck();
+  93   1          I2C_MasterSendData(memAddr & 0xFF);
+  94   1          I2C_MasterRxAck();
+  95   1          I2C_MasterStart();
+  96   1          I2C_MasterSendData(devAddr | 0x01);
+  97   1          I2C_MasterRxAck();
+  98   1          while(size--)
+  99   1          {
+ 100   2              I2C_SendMasterCmd(I2C_MasterCmd_Recv);
+ 101   2              *buf++ = I2CRXD;
+ 102   2              if (size == 0)
+ 103   2              {
+ 104   3                  I2C_MasterNAck();
+ 105   3              }
+ 106   2              else
+ 107   2              {
+ 108   3                  I2C_MasterAck();
+ 109   3              }
+ 110   2          }
+ 111   1          I2C_MasterStop();
+ 112   1          SFRX_OFF();
+ 113   1          return HAL_OK;
+ 114   1      }
+
+C51 COMPILER V9.60.7.0   FW_I2C                                                            10/01/2024 12:56:55 PAGE 3   
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1239    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      30
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

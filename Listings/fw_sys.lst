@@ -1,0 +1,111 @@
+C51 COMPILER V9.60.7.0   FW_SYS                                                            10/01/2024 12:56:56 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FW_SYS
+OBJECT MODULE PLACED IN .\Objects\fw_sys.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE FwLib_STC8\src\fw_sys.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(.\FwLib_ST
+                    -C8\include) DEFINE(__CX51__,__CONF_MCU_MODEL=MCU_MODEL_STC8H1K28,__CONF_FOSC=24000000UL) DEBUG OBJECTEXTEND PRINT(.\List
+                    -ings\fw_sys.lst) OBJECT(.\Objects\fw_sys.obj)
+
+line level    source
+
+   1          // Copyright 2021 IOsetting <iosetting(at)outlook.com>
+   2          //
+   3          // Licensed under the Apache License, Version 2.0 (the "License");
+   4          // you may not use this file except in compliance with the License.
+   5          // You may obtain a copy of the License at
+   6          //
+   7          //     http://www.apache.org/licenses/LICENSE-2.0
+   8          //
+   9          // Unless required by applicable law or agreed to in writing, software
+  10          // distributed under the License is distributed on an "AS IS" BASIS,
+  11          // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  12          // See the License for the specific language governing permissions and
+  13          // limitations under the License.
+  14          
+  15          #include "fw_sys.h"
+  16          
+  17          /**
+  18           * An approximate estimate of instruction cycles in one second, may vary in
+  19           * different compilers even differnt versions, adjust it if you find the
+  20           * delay too slow or fast.
+  21          */
+  22          #if defined (__SDCC_SYNTAX_FIX)
+                  #define __CLK_REF 10000
+              #elif defined (SDCC) || defined (__SDCC)
+                  #define __CLK_REF 9000
+              #elif defined __CX51__ || defined __C51__
+  27              #define __CLK_REF 10000
+  28          #endif
+  29          
+  30          __CODE uint16_t ticks_ms    = (__CONF_FOSC / ((__CONF_CLKDIV == 0)? 1 : __CONF_CLKDIV) / __CLK_REF);
+  31          __CODE uint8_t  ticks_us    = (__CONF_FOSC / ((__CONF_CLKDIV == 0)? 1 : __CONF_CLKDIV) / __CLK_REF / 1000)
+             -;
+  32          
+  33          
+  34          /**
+  35           * Change system clock
+  36           * - For SDCC only.
+  37           * - For Keil C51, trim IRC in STC-ISP will be more accurate
+  38           * - Invoke this in the beginning of main()
+  39          */
+  40          void SYS_SetClock(void)
+  41          {
+  42   1      #if defined (SDCC) || defined (__SDCC)
+                  uint16_t i = 0; uint8_t j = 5;
+                  P_SW2 = 0x80;
+                  if (CLKDIV != (__CONF_CLKDIV))
+                  {
+                      CLKDIV = (__CONF_CLKDIV);
+                      do { // Wait a while after clock changed, or it may block the main process
+                          while (--i);
+                      } while (--j);
+                  }
+                  P_SW2 = 0x00;
+C51 COMPILER V9.60.7.0   FW_SYS                                                            10/01/2024 12:56:56 PAGE 2   
+
+                  SYS_SetFOSC(__CONF_IRCBAND, __CONF_VRTRIM, __CONF_IRTRIM, __CONF_LIRTRIM);
+                  while (--i); // Wait
+              #endif
+  56   1      }
+  57          
+  58          void SYS_TrimClock(uint8_t vrtrim, uint8_t irtrim)
+  59          {
+  60   1          uint16_t i = 0;
+  61   1          SYS_SetFOSC(__CONF_IRCBAND, vrtrim, irtrim, __CONF_LIRTRIM);
+  62   1          while (--i); // Wait
+  63   1      }
+  64          
+  65          void SYS_Delay(uint16_t t)
+  66          {
+  67   1          uint16_t i;
+  68   1          do
+  69   1          {
+  70   2              i = ticks_ms;
+  71   2              while (--i);
+  72   2          } while (--t);
+  73   1      }
+  74          
+  75          void SYS_DelayUs(uint16_t t)
+  76          {
+  77   1          uint8_t i;
+  78   1          do
+  79   1          {
+  80   2              i = ticks_us;
+  81   2              while (--i);
+  82   2          } while (--t);
+  83   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     71    ----
+   CONSTANT SIZE    =      3    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
